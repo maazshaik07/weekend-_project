@@ -1,42 +1,74 @@
-// Get references to the HTML elements
-const addExpenseBtn = document.getElementById('addExpenseBtn');
-const expenseTableBody = document.querySelector('#expenseTable tbody');
+const addBtn = document.getElementById('addExpense');
+const title = document.getElementById('title');
+const amount = document.getElementById('amount');
+const date = document.getElementById('date');
+const list = document.getElementById('expenseList');
+const total = document.getElementById('total');
+const todayExp = document.getElementById('today');
+const highestExp = document.getElementById('highest');
+const search = document.getElementById('search');
+const sort = document.getElementById('sort');
+const themeSwitch = document.getElementById('themeSwitch');
 
-// Function to handle adding an expense
-function addExpense() {
-    // 1. Get the values from the input fields
-    const titleInput = document.getElementById('title');
-    const amountInput = document.getElementById('amount');
-    const dateInput = document.getElementById('date');
+let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 
-    const title = titleInput.value.trim();
-    const amount = parseFloat(amountInput.value);
-    const date = dateInput.value;
+function render() {
+  list.innerHTML = '';
+  let filtered = expenses.filter(e =>
+    e.title.toLowerCase().includes(search.value.toLowerCase())
+  );
 
-    // 2. Simple validation: Check if all fields are filled
-    if (title === '' || isNaN(amount) || amount <= 0 || date === '') {
-        alert('Please enter a valid title, amount, and date.');
-        return; // Stop the function if validation fails
-    }
+  if (sort.value === 'amount')
+    filtered.sort((a, b) => b.amount - a.amount);
+  else if (sort.value === 'date')
+    filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    // 3. Create a new row (<tr>) for the table
-    const newRow = expenseTableBody.insertRow();
+  filtered.forEach((exp, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${exp.title}</td>
+      <td>$${exp.amount}</td>
+      <td>${exp.date}</td>
+      <td><button onclick="removeExpense(${index})">🗑️</button></td>
+    `;
+    list.appendChild(row);
+  });
 
-    // 4. Create cells (<td>) and insert the data
-    const titleCell = newRow.insertCell(0);
-    const amountCell = newRow.insertCell(1);
-    const dateCell = newRow.insertCell(2);
-
-    titleCell.textContent = title;
-    // Format amount for display
-    amountCell.textContent = '$' + amount.toFixed(2);
-    dateCell.textContent = date;
-
-    // 5. Clear the input fields after adding the expense
-    titleInput.value = '';
-    amountInput.value = '';
-    dateInput.value = '';
+  updateStats();
 }
 
-// 6. Attach the 'addExpense' function to the button click event
-addExpenseBtn.addEventListener('click', addExpense);
+function updateStats() {
+  let totalVal = expenses.reduce((sum, e) => sum + e.amount, 0);
+  let today = new Date().toISOString().split('T')[0];
+  let todayVal = expenses
+    .filter(e => e.date === today)
+    .reduce((sum, e) => sum + e.amount, 0);
+  let highest = Math.max(0, ...expenses.map(e => e.amount));
+
+  total.textContent = `$${totalVal}`;
+  todayExp.textContent = `$${todayVal}`;
+  highestExp.textContent = `$${highest}`;
+}
+
+addBtn.onclick = () => {
+  if (!title.value || !amount.value || !date.value) return alert('Fill all fields!');
+  expenses.push({
+    title: title.value,
+    amount: +amount.value,
+    date: date.value,
+  });
+  localStorage.setItem('expenses', JSON.stringify(expenses));
+  title.value = amount.value = date.value = '';
+  render();
+};
+
+function removeExpense(i) {
+  expenses.splice(i, 1);
+  localStorage.setItem('expenses', JSON.stringify(expenses));
+  render();
+}
+
+search.oninput = render;
+sort.onchange = render;
+themeSwitch.onchange = () => document.body.classList.toggle('dark');
+render();

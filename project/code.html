@@ -1,44 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Expense Tracker</title>
-    <link rel="stylesheet" href="style.css"> </head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="style.css" /><div class=""></div></head>
 <body>
+  <div class="container">
+    <header>
+      <h1> sample Expense Tracker</h1>
+      <div class="theme-toggle">
+        <label>Light</label>
+        <input type="checkbox" id="themeSwitch" />
+        <label for="themeSwitch">Dark</label>
+      </div>
+    </header>
 
-    <div class="container">
-        <h1>Expense Tracker</h1>
+    <div class="main">
+      <div class="form-card">
+        <label>Title</label>
+        <input type="text" id="title" placeholder="Title" />
+        <label>Amount</label>
+        <input type="number" id="amount" placeholder="Amount" />
+        <label>Date</label>
+        <input type="date" id="date" />
+        <button id="addExpense">Add Expense</button>
+      </div>
 
-        <div class="input-section">
-            <h2>Add New Expense</h2>
-            <label for="title">Title:</label>
-            <input type="text" id="title" placeholder="e.g., Groceries">
-
-            <label for="amount">Amount ($):</label>
-            <input type="number" id="amount" placeholder="e.g., 50">
-
-            <label for="date">Date:</label>
-            <input type="date" id="date">
-
-            <button id="addExpenseBtn">Add Expense</button>
+      <div class="stats-card">
+        <div class="stats">
+          <p>Total Expenses<br><span id="total">$0</span></p>
+          <p>Today's Expenses<br><span id="today">$0</span></p>
+          <p>Highest Expense<br><span id="highest">$0</span></p>
         </div>
-
-        <div class="list-section">
-            <h2>Expense List</h2>
-            <table id="expenseTable">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    </tbody>
-            </table>
+        <div class="search-sort">
+          <input type="text" id="search" placeholder="Search by title" />
+          <select id="sort">
+            <option value="default">Sort by</option>
+            <option value="amount">Amount</option>
+            <option value="date">Date</option>
+          </select>
         </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="expenseList"></tbody>
+        </table>
+      </div>
     </div>
+  </div>
 
-    <script src="script.js"></script> </body>
+  <script src="script.js"></script>
+</body>
 </html>
